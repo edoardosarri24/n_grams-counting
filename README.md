@@ -49,3 +49,25 @@ Use the scripts in the `exec/` directory to build and run the project automatica
 - Sanitizers (Debug):
     *   `./exec/AUBsanitizer.sh [seq|par]` - Runs with Address and Undefined Behavior Sanitizers.
     *   `./exec/Msanitizer.sh [seq|par]` - Runs with Memory Sanitizer (Linux only, requires Clang).
+
+### Structures
+```
+.
+├── CMakeLists.txt
+├── README.md
+├── agent.md - Agent specific documentation (Gemini used)
+├── exec - Helper scripts for building, running, and profiling
+│   ├── AUBsanitizer.sh - Runs Address and Undefined Behavior Sanitizers
+│   ├── Msanitizer.sh - Runs Memory Sanitizer
+│   ├── debug_execution.sh - Builds and runs in Debug mode
+│   ├── download_input.sh - Downloads and generates input datasets
+│   ├── profiling.sh - Builds and runs with profiling enabled
+│   ├── release_execution.sh - Builds and runs in Release mode for performance
+│   └── script_download_input - Python source code for data download
+├── parallel/ - Source code for the parallel OpenMP implementation
+├── report/ - Source code for the project report (LaTeX)
+├── report.pdf - Project report
+├── sequential/ - Source code for the sequential C implementation
+├── slides/ - Source code for the slides (LaTeX)
+└── slides.pdf - Presentation slides
+```
