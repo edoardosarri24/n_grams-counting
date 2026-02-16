@@ -156,7 +156,7 @@ We have obtained a speed-up of $sup=\tfrac{t_{seq}}{t_{par}}=10.30$.
 \subsection{2GB size}
 This is absolutely the most interesting scenario because we can see that the parallel version is slower than the sequential one.
 
-With a low dimension of the input file, it is possible to store all (or the main part) the information in the L3 cache. With a huge dataset we move from and to the main memory and this becomes a Memory-Bound task and with all cores working we have a memory bandwidth saturation.
+The problem in this case is the running out of mempory. With 2 GB input data there are too much $n$-grams to store in each local hash table in the parallel version.
 
 \myskip
 

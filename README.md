@@ -1,11 +1,9 @@
 # parallel-trigrams
-
 This project counts n-grams (sequences of words, defaulting to trigrams) in large text files. It includes both a sequential and a parallel implementation to compare performance. The system normalizes text and uses a custom Hash Table to efficiently calculate and report statistics, such as the most frequent n-grams.
 
 All is documented in [report](https://github.com/edoardosarri24/parallel-n_grams/blob/master/report.pdf) file.
 
 ### Requirements
-
 To build and run this project, you need the following software:
 - **CMake** (3.21 or newer).
 - A **C Compiler** with **C23** and **OpenMP** support (e.g., GCC, Clang).
@@ -51,16 +49,3 @@ Use the scripts in the `exec/` directory to build and run the project automatica
 - Sanitizers (Debug):
     *   `./exec/AUBsanitizer.sh [seq|par]` - Runs with Address and Undefined Behavior Sanitizers.
     *   `./exec/Msanitizer.sh [seq|par]` - Runs with Memory Sanitizer (Linux only, requires Clang).
-
-### Structure
-```text
-.
-├── CMakeLists.txt      # Main project build configuration.
-├── README.md           # Project README.
-├── agent.md            # Agent role definition and instructions.
-├── report.pdf          # Report with all details and ideas.
-├── exec/               # Scripts for building, running, and profiling.
-├── parallel/           # Source code for the parallel implementation.
-├── report/             # LaTeX source for the project report.
-└── sequential/         # Source code for the sequential implementation.
-```
