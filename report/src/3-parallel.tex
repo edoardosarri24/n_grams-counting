@@ -19,7 +19,7 @@ In the sequential version we have a hash table with 10000019 buckets. We have ev
 \subsection{Arena Management}
 In the sequential version, a memory arena is used to manage node allocations efficiently. In the parallel version during the merge phase, multiple threads may need to allocate new nodes in the global hash table simultaneously. Using a single global arena requires protecting the allocation function with a lock, creating a bottleneck due to high contention.
 
-To address this efficiently, we implemented a thread-local arena: at the beginning of the merge phase, each thread creates a temporary private arena; the allocation of memory to create a new node doesn't touch the global arena, but only the private arena and this means no synchronization.
+To address this efficiently, we implemented a thread-local arena: at the beginning of the population phase, each thread creates a temporary private arena; the allocation of memory to create a new node doesn't touch the global arena, but only the private arena and this means no synchronization.
 At the end of the merge phase, we utilize a connection mechanism: since our arena (both local and global) is implemented as a linked list of memory blocks, we can transfer ownership of these blocks from the fork thread to the main thread simply appending these chains. This operation is performed in a minimal critical section and involves only pointer manipulation, i.e. the time is in $O(1)$ regarding data size.
 
 The dimension of blocks in the local arena is 1MB. This minimizes the frequency of \texttt{malloc} calls, which implies a lock in the system and so an overhead.

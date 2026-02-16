@@ -1,7 +1,7 @@
 # parallel-trigrams
 This project counts n-grams (sequences of words, defaulting to trigrams) in large text files. It includes both a sequential and a parallel implementation to compare performance. The system normalizes text and uses a custom Hash Table to efficiently calculate and report statistics, such as the most frequent n-grams.
 
-All is documented in [report](https://github.com/edoardosarri24/parallel-n_grams/blob/master/report.pdf) file.
+All is documented in [report.pdf](https://github.com/edoardosarri24/parallel-n_grams/blob/master/report.pdf) file. The slides for the presentation is in [repslides.pdf](https://github.com/edoardosarri24/parallel-n_grams/blob/master/slides.pdf)
 
 ### Requirements
 To build and run this project, you need the following software:

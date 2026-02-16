@@ -1,0 +1,120 @@
+\section{Analisi}
+\subsection{Parallel n-grams}
+
+\begin{frame}{Analisi}
+    Confronto delle prestazioni tra versione sequenziale e parallela su dataset di diverse dimensioni.
+    \begin{itemize}
+        \item Dataset: da 100KB a 2 GB.
+        \item Metrica: Speed-up $T_{seq} / T_{par}$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Testo}
+        Esempi di 3-grams più frequenti trovati:
+        \begin{itemize}
+            \item \textbf{100KB}: This is the unique input size for which the most frequent 3-grams are \textit{randallsville new york} (24), \textit{variety of quartz} (10) and \textit{in the uk} (9).
+            \item \textbf{100MB - 2GB:} The most frequent 3-grams always the same: \textit{one of the}, \textit{as well as}, and \textit{a lot of}. The frequencies in 2 GB file are respectively: 157788, 142530, and 86345.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 100KB}
+        Parallelo più lento per l'overhead del fork-join.
+        \begin{itemize}
+            \item Seq: 0.02s.
+            \item Par: 0.057s.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 100MB}
+        \begin{itemize}
+            \item Seq:
+            \begin{itemize}
+                \item Totale: 3.33s
+                \item Popolazione: 3.06s
+            \end{itemize}
+            \item Par:
+            \begin{itemize}
+                \item Totale: 0.67s
+                \item Popolazione: 0.56s
+            \end{itemize}
+            \item Speed-up: $4.97\times$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 500MB}
+        \begin{itemize}
+            \item Seq:
+            \begin{itemize}
+                \item Totale: 31.38s
+                \item Popolazione: 29.72s
+            \end{itemize}
+            \item Par:
+            \begin{itemize}
+                \item Totale: 4.41s
+                \item Popolazione: 2.65s
+            \end{itemize}
+            \item Speed-up: $7.11\times$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 1GB}
+        \begin{itemize}
+            \item Seq:
+            \begin{itemize}
+                \item Totale: 53.79s
+                \item Popolazione: 51.03s
+            \end{itemize}
+            \item Par:
+            \begin{itemize}
+                \item Totale: 6.65s
+                \item Popolazione: 3.88s
+            \end{itemize}
+            \item Speed-up: $8.09\times$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 1.5GB}
+        \begin{itemize}
+            \item Seq:
+            \begin{itemize}
+                \item Totale: 207.66s
+                \item Popolazione: 199.02s
+            \end{itemize}
+            \item Par:
+            \begin{itemize}
+                \item Totale: 20.15s
+                \item Popolazione: 11.76s
+            \end{itemize}
+            \item Speed-up: $10.3\times$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Tempo - 2GB}
+        Forse il più interessante: il parallelo è più lento del sequenziale.
+        \begin{itemize}
+            \item Seq:
+            \begin{itemize}
+                \item Totale: 346.54s
+                \item Popolazione: 333.32s
+            \end{itemize}
+            \item Par:
+            \begin{itemize}
+                \item Totale: 357.92s
+                \item Popolazione: 335.24s
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}

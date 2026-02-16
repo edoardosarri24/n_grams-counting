@@ -1,0 +1,95 @@
+\section{Sequential}
+\subsection{Parallel n-grams}
+
+\begin{frame}{Sequential}
+    L'\href{https://github.com/edoardosarri24/parallel-n_grams/blob/master/sequential/src/main.c}{implementazione sequenziale} segue i seguenti step:
+    \begin{enumerate}
+        \item \textbf{Data Loading}: In \href{https://github.com/edoardosarri24/parallel-n_grams/blob/dc9c6109a6f815b851e6ed46a0fc79046be69371/sequential/src/main_functions.c}{map\_file()} si carica il file di input.
+        \item \textbf{N-gram Extraction}: Buffer circolare si simensione $n$ per mantenere l'$n$-gram corrente.
+        \item \textbf{Populate Hash Table}: Inserimento/aggiornamento con \href{https://github.com/edoardosarri24/parallel-n_grams/blob/dc9c6109a6f815b851e6ed46a0fc79046be69371/sequential/src/hash_table.c}{add\_gram()} del contatore per ogni $n$-gram incontrato.
+        \item \textbf{Reporting:} Calcolo e stampa delle \href{https://github.com/edoardosarri24/parallel-n_grams/blob/dc9c6109a6f815b851e6ed46a0fc79046be69371/sequential/src/statistics.c}{statistiche} finali.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Sequential}
+    \begin{block}{Data Loading}
+        Il file di input può raggiungere grandi dimensioni.
+        \begin{itemize}
+            \item \textbf{Problema:} Overhead per copie multiple e system calls se facciamo molte \texttt{read()}.
+            \item \textbf{Desiderato}: Sarebbe comodo trattare l'input come un singolo array di caratteri.
+            \item \textbf{Soluzione:} Memory Mapped I/O  con \texttt{mmap}.
+            \item \textbf{Ottimizzazione:} Si indica al kernel l'accesso sequenziale al file con \texttt{madvise} e il flag \texttt{MADV\_SEQUENTIAL}.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Sequential}
+    \begin{block}{Allocazione}
+        Dobbiamo memorizzare ogni $n$-gram incontrato.
+        \begin{itemize}
+            \item \textbf{Problema}: Due problemi:
+            \begin{itemize}
+                \item Una \texttt{malloc} alloca sia lo spazio richiesto (per noi poco) che metadati: i metadati non sono irrilevanti rispetto alla dimensione di un $n$-gram.
+                \item Con più thread, \texttt{malloc} richiede un system lock: troppo overhead.
+            \end{itemize}
+            \item \textbf{Soluzione}: Usare un \textit{Arena Allocator}. Si alloca più memoria contigua (16 MB di deafult) e si prende via via quello ch ci serve.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Sequential}
+    \begin{block}{Allocazione}
+        Dobbiamo memorizzare ogni $n$-gram incontrato.
+        \begin{itemize}
+            \item \textbf{Vantaggi}: Poche \texttt{malloc}. Si riduce la frammentazione e si migliora la località spaziale.
+            \item \textbf{Quantificazione}:
+            \begin{itemize}
+                \item Popolazione: Nella versione con molte \texttt{malloc} il popolamento della hash table richiede $\approx 18s$, con l'arena allocator si scende a $\approx 10s$.
+                \item Free: Si passa da $\approx 2s$ a $\approx 0.001s$.
+            \end{itemize}
+            \item \textbf{Profiling}: Nella prima versione la maggior parte del tempo è speso in \texttt{malloc}, mentre con l'arena allocator il tempo è quasi interamente nella funzione \textit{add\_gram()}.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Sequential}
+    \begin{block}{Statistiche}
+        Per l'estrazione delle statistiche sono stati valutati due approcci: sorting e top-K.
+    \end{block}
+    \begin{block}{Statistiche - Sorting}
+        \begin{itemize}
+            \item Si definisce un array di puntatori di lenghezza $N$, con $N$ numero di $n$-grams unici.
+            \item Popolare questo array con i puntatori agli $n$-grams nella hash table.
+            \item Ordnare l'array sulla frequenza.
+            \item Stampare i primi $K$.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Sequential}
+    \begin{block}{Statistiche - Top-K (implementata)}
+        \begin{itemize}
+            \item Si definisce un array di puntatori di lunghezza $K$.
+            \item Iterazione singola sulla Hash Table, sostiuendo il minimo se si trova un $n$-gram più frequente.
+            \item Complessità temporale $O(N \cdot K)$ e spaziale $O(K)$.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Sequential}
+    Per l'estrazione sono stati valutati due approcci.
+    \begin{block}{Statistiche - Complessità}
+        \begin{itemize}
+            \item \textbf{Tempo}:
+            \begin{itemize}
+                \item Sorting: Si deve passare sulla hash table e poi ordinare e quindi $O(M + N\log N)$.
+                \item Top-K: Si passa sulla hash table una sola volta e per ogni suo elemneot si scandisce la tabella dei top-K, quindi $O(M \cdot K)\approx O(M)$.
+            \end{itemize}
+            \item \textbf{Spazio}:
+                        \begin{itemize}
+                \item Sorting: $O(N)$
+                \item Top-K: $O(K)$
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}

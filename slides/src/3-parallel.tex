@@ -1,0 +1,49 @@
+\section{Parallel}
+\subsection{Parallel n-grams}
+
+\begin{frame}{Parallel}
+    L'\href{https://github.com/edoardosarri24/parallel-n_grams/blob/master/parallel/src/main.c}{implementazione parallela} segue il pattern Map-Reduce secondo i seguenti step:
+    \begin{enumerate}
+        \item \textbf{Inizializzazione}: Prima della parallelizzazione, il main thread alloca la tabella globale e quelle locali.
+        \item \textbf{Popolazione}:
+        \item \textbf{Merge}:
+        \item \textbf{Statistiche}: Vengono estratte in modo sequenziale.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Parallel}
+    \begin{block}{Inizializzazione}
+        \begin{itemize}
+            \item Tabella globale: Stessa dimensione della versione sequenziale.
+            \item Vettore di tabelle locali: Serve per gestire a fase di merge. Ha tanti elementi quanti sono i thread.
+            \item Tabelle locali: Per semlificare la fase di merge, ha la stessa dimensione di quella globale.
+            \item Indici: Ogni threa ha il suo indice di inizio e fine per il chunk di file da processare.
+            \item Varibili in \href{https://github.com/edoardosarri24/parallel-n_grams/blob/9a8df20839285bb66af1c2f3734a530712e590b4/parallel/src/main_functions.c}{populate\_hashtable()}:
+            \begin{itemize}
+                \item Sono \texttt{shared} la tabella globale e il vettore di tabelle locali.
+                \item Sono \texttt{firstprivate} le tabelle locali e le varibili di inizio e fine del chunk.
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Parallel}
+    \begin{block}{Popolazione (Map)}
+        \begin{itemize}
+            \item Parallelizazione: Si usa \texttt{\# pragma omp parallel} e non \texttt{parallel for} per gestire meglio i boundarie e l'allignment.
+            \item Boundaries: Un $n$-gram è processato dal thread $i$-esimo se la sua prima parola è nel chunk assegnato a tale thread.
+            \item Allignment: Se l'indice di inizio è a metà parola, allora si avanza all'inizio della parola successiva. Non fatto per il main thread.
+            \item Arena: Ogni thread ha il proprio arena allocator per evitare di usare lock quando si richiesde spazio.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Parallel}
+    \begin{block}{Merge (Reduce)}
+        \begin{itemize}
+            \item Parallelizzazione non su thread ma su bucket: Ogni thread lavora sulla stessa partizione della tabella globale e ogni tabella locale. Permette di non usare mutex.
+            \item Zero-copy: Se un $n$-gram è presenta nella tabella globale allora si aggiorna il contatore, altrimenti si sposta il puntatore di quello della tabella locale.
+            \item Scheduling: Vista la sparsità delle tabelle, si usa un dinamic scheduling. Di dafult la block size è 1 e si può avere false sharing. La dimensione del blocco è stata settata a $(64/\texttt{sizeof(Node*)})\times16$, cioè 16 cache line.
+        \end{itemize}
+    \end{block}
+\end{frame}

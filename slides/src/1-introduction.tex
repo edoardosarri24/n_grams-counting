@@ -1,18 +1,66 @@
-\section{Parallel n-grams}
-\subsection{Parallel Computing}
+\section{Introduzione}
+\subsection{Parallel n-grams}
 
-\begin{frame}{Car Rental}
-    \begin{block}{Applicazione}
-        Applicazione a microservizi sviluppata in \textit{Quarkus in Action}.
-    \end{block}
-    \begin{block}{Architettura}
-        Composta da cinque microservizi:
+\begin{frame}{Introduzione}
+        Conteggio degli $n$-grams (sequenze di $n$ parole consecutive) in file di testo.
         \begin{itemize}
-            \item Billing-service
-            \item Inventory-service
-            \item Rental-service
-            \item Reservation-service
-            \item Users-service
+            \item Input:
+            \begin{itemize}
+                \item File di testo inglese (normalizzazione semplificata).
+                \item Lunghezza $n$ degli $n$-grams (default 3).
+            \end{itemize}
+            \item Output: Statistiche sugli $n$-grams più frequenti e sui tempi di esecuzione.
+        \end{itemize}
+    \begin{block}{Versioni}
+        Sono state realizzate due implementazioni:
+        \begin{itemize}
+            \item Sequenziale.
+            \item Parallela (OpenMP).
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Introduzione}
+    \begin{block}{Input}
+        Dataset testuale (es. \href{https://huggingface.co/datasets/allenai/c4/tree/main/en}{Hugging Face C4}).
+        \begin{itemize}
+            \item Script Python per il download. Permette di specificare la dimensione del file di input.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Normalizzazione}
+        Creazione di classi di equivalenza per parole simili:
+        \begin{itemize}
+            \item Tutto in minuscolo.
+            \item Rimozione punteggiatura.
+            \item Si mantengono solo caratteri alfanumerici e singolo spazio.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Introduzione}
+    \begin{block}{Struttura Dati}
+        Utilizzo di una Hash Table per contare gli $n$-grams.
+        \begin{itemize}
+            \item Hash Function: Polynomial Hash,
+                \begin{equation*}
+                    H(c)=\left(\sum_{i=1}^n c_i\cdot p^{n-i}\right) \mod M
+                \end{equation*}
+            \item Hash Function implementation: Dato $H(c_1\cdots c_i)$,
+                \begin{equation*}
+                    H(c_1\cdots c_ic_{i+1})=(H(c_1\cdots c_i)\cdot p+c_{i+1}) \mod M.
+                \end{equation*}
+            \item Collisioni: Open Chain.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Introduzione}
+    \begin{block}{Struttura Dati}
+        Hash Function: $\displaystyle H(c)=\left(\sum_{i=1}^n c_i\cdot p^{n-i}\right) \mod M$
+        \begin{itemize}
+            \item $p$: Deve essere primo e più grande della dimensione dell'alfabeto. Abbiamo scelto $p=257$.
+            \item $M$: Deve essere primo. Regoalre $M$ perfette di ottenere un fill factor $\alpha=\tfrac{busy\_buckets}{table\_length}$ migliore o peggiore. Abbiamo scelto $M=10000019$.
+            \item Overflow: Problemi se durante il calcolo $H(c_1,\cdots,c_i)$ è più grande del tipo di dato usato per un qualche $i$. Abbiamo usato il tipo più veloce per l'architettura di almeno 32 bit (i.e., \texttt{uint\_fast32\_t}): $inter\_var\_dim=(M-1)\cdot p+c_{max}<2^{32}$.
         \end{itemize}
     \end{block}
 \end{frame}
