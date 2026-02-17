@@ -4,7 +4,7 @@ In this chapter we consider the time performance of our project. We will focus o
 
 We analyze the 3-grams for simplicity and we print only the top-3 frequent 3-grams. We will use the release compiling and the profiling.
 
-We will use three dimensions for the input: a very small dataset (i.e., 100KB), in which we expect that the sequential version obtains better performance; a medium input plain text (i.e., 100MB and 500MB); a huge, but not too much for time execution, input file (i.e., 2GB).
+We will use three dimensions for the input: a very small dataset (i.e., 100KB), in which we expect that the sequential version obtains better performance; a medium input plain text (i.e., 100MB and 500MB); a huge, but not too much for time execution, input file (i.e., 1.5GB).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Arena Allocator}
@@ -28,8 +28,6 @@ The text statistics are the same for both sequential and parallel versions of th
         The three most frequent 3-grams are \textit{one of the}, \textit{as well as} and \textit{a lot of}; their frequencies are respectively 53934, 48790 and 29367.
     \item 1.5GB \\
         The three most frequent 3-grams are \textit{one of the}, \textit{as well as} and \textit{a lot of}; their frequencies are respectively 118445, 106364 and 64775.
-    \item 2GB \\
-        The three most frequent 3-grams are \textit{one of the}, \textit{as well as} and \textit{a lot of}; their frequencies are respectively 157788, 142530 and 86345.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,8 +44,6 @@ The hash table performance is the same for both sequential and parallel versions
         The maximum chain length is 23 nodes and the average is 6.30. The load factor (i.e., elements/buckets) has a value of 6.2910 and the fill factor (i.e., busy/total) of 0.9981.
     \item 1.5GB \\
         The maximum chain length is 35 nodes and the average is 12.22. The load factor (i.e., elements/buckets) has a value of 12.2241 and the fill factor (i.e., busy/total) of 1.0000.
-    \item 2GB \\
-        The maximum chain length is 40 nodes and the average is 15.54. The load factor (i.e., elements/buckets) has a value of 15.5416 and the fill factor (i.e., busy/total) of 1.0000.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,27 +146,5 @@ We have obtained a speed-up of $sup=\tfrac{t_{seq}}{t_{par}}=10.30$.
         \item Populating hash table time: 11.7647 seconds.
         \item Freeing the hash table is: 0.0507 seconds.
         \item Statistics extraction: 8.3235 seconds.
-    \end{itemize}
-\end{itemize}
-
-\subsection{2GB size}
-This is absolutely the most interesting scenario because we can see that the parallel version is slower than the sequential one.
-
-\myskip
-
-\begin{itemize}
-    \item Sequential
-    \begin{itemize}
-        \item Total execution time: 346.5373 seconds, i.e. 5 minutes and 46 seconds.
-        \item Populating hash table time: 333.3192 seconds, i.e. 5 minutes and 30 seconds.
-        \item Freeing the hash table: 0.0367 seconds.
-        \item Statistics extraction: 13.1746 seconds.
-    \end{itemize}
-    \item Parallel
-    \begin{itemize}
-        \item Total execution time: 357.9196 seconds, i.e. 5 minutes and 57 seconds.
-        \item Populating hash table time: 335.2379 seconds, i.e. 5 minutes and 35 seconds.
-        \item Freeing the hash table: 0.1226 seconds.
-        \item Statistics extraction: 22.5551 seconds.
     \end{itemize}
 \end{itemize}
