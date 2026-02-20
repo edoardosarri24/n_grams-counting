@@ -4,7 +4,7 @@
 \begin{frame}{Analisi}
     Confronto delle prestazioni tra versione sequenziale e parallela su dataset di diverse dimensioni.
     \begin{itemize}
-        \item Dataset: da 100KB a 2 GB.
+        \item Dataset: da 100KB a 1.5 GB.
         \item Metrica: Speed-up $T_{seq} / T_{par}$.
     \end{itemize}
 \end{frame}
@@ -14,7 +14,20 @@
         Esempi di 3-grams più frequenti trovati:
         \begin{itemize}
             \item \textbf{100KB}: This is the unique input size for which the most frequent 3-grams are \textit{randallsville new york} (24), \textit{variety of quartz} (10) and \textit{in the uk} (9).
-            \item \textbf{100MB - 2GB:} The most frequent 3-grams always the same: \textit{one of the}, \textit{as well as}, and \textit{a lot of}. The frequencies in 2 GB file are respectively: 157788, 142530, and 86345.
+            \item \textbf{100MB - 1.5GB:} The most frequent 3-grams always the same: \textit{one of the}, \textit{as well as}, and \textit{a lot of}. The frequencies in 1.5 GB file are respectively: 118445, 106364, and 64775.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Analisi}
+    \begin{block}{Hash Table}
+        Fill factor $\alpha=\tfrac{busy\_buckets}{table\_length}$:
+        \begin{itemize}
+            \item \textbf{100 KB}: 0.0017.
+            \item \textbf{100 MB}: 0.6853.
+            \item \textbf{500 MB}: 0.991.
+            \item \textbf{1 GB}: 0.9981.
+            \item \textbf{1.5 GB:} 1.0000.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -97,24 +110,6 @@
                 \item Popolazione: 11.76s
             \end{itemize}
             \item Speed-up: $10.3\times$
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Analisi}
-    \begin{block}{Tempo - 2GB}
-        Forse il più interessante: il parallelo è più lento del sequenziale.
-        \begin{itemize}
-            \item Seq:
-            \begin{itemize}
-                \item Totale: 346.54s
-                \item Popolazione: 333.32s
-            \end{itemize}
-            \item Par:
-            \begin{itemize}
-                \item Totale: 357.92s
-                \item Popolazione: 335.24s
-            \end{itemize}
         \end{itemize}
     \end{block}
 \end{frame}
